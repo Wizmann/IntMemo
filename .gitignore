@@ -52,3 +52,11 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# ply
+IntMemo/parsetab.py
+IntMemo/parser.out
+
+# vim
+*.swp
+*.swo
