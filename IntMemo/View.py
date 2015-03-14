@@ -3,6 +3,7 @@ import sys
 import os
 
 from Parser import parser
+from Render import Renderer
 
 flat_views = []
 memo_views = []

@@ -22,7 +22,6 @@ tags: python, angularjs, love
 {"date": "2013-01-04", "comment": "Only work no play, make Jake a dull boy."}
 '''
 
-
 class TestParser(unittest.TestCase):
     def test_lexer(self):
         lexer.input("[maerlyn's]\n[rainbow]")
