@@ -5,7 +5,7 @@ from IntMemo.site  import Site
 
 class MyMemoView(MemoView):
     path = 'content/memo'
-    reivew_period = [1, 2, 4, 7, 15]
+    review_period = [1, 2, 4, 7, 15]
 
 class AboutView(FlatView):
     path = 'content/about.md'
