@@ -1,13 +1,18 @@
 #coding = utf-8
-import Generator
 import View
 
-class Site(object):
-    def generate(self):
-        flat_gen = Generator(self, "FlatView")
-        for view in View.flat_views:
-            flat_gen.generate(view)
+from Generator import Generator
 
-        memo_gen = Generator(self, "MemoView")
+class Site(object):
+    flat_views = View.flat_views
+    memo_views = View.memo_views
+    def generate(self):
+        flat_gen = Generator("FlatView")
+        for view in View.flat_views:
+            view.process()
+            flat_gen.generate(self, view)
+
+        memo_gen = Generator("MemoView")
         for view in View.memo_views:
-            memo_gen.generate(view)
+            view.process()
+            memo_gen.generate(self, view)

@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block head %}
+<script src="http://intgraph.qiniudn.com/static/buckets-minified.js"></script>
+<script src="http://intgraph.qiniudn.com/static/angular.min.js"></script>
+<script src="http://7xi3l2.com1.z0.glb.clouddn.com/moment.js"></script>
+<script>
+var IgApp = angular.module('IgApp', [], function($interpolateProvider) {
+    $interpolateProvider.startSymbol('{$');
+    $interpolateProvider.endSymbol('$}');
+});
+
+var uniqueItems = function (data, key) {
+    var result = new buckets.Set()
+    for (var i = 0; i < data.length; i++) {
+        var tags = data[i][key];
+        for (var idx in tags) {
+            result.add(tags[idx]);
+        }
+    }
+    return result.toArray();
+};
+
+function IgCtrl($scope, filterFilter) {
+    {% for key, value in tags.items() %}
+    $scope.use_{{ key }} = {};
+    {% endfor %}
+
+    $scope.articles = [
+        {% for article in view.content %}
+        {{ article|to_brief_json|safe }},
+        {% endfor %}
+    ];
+    
+    for (var i = 0; i < $scope.articles.length; i++) {
+        var t;
+        if (typeof $scope.articles[i].process.nexttime === undefined) {
+            t = $scope.articles[i].process.nexttime;
+        } else {
+            t = $scope.articles[i].date;
+        }
+        var diff = moment().startOf('day').diff(moment(t), 'days');
+        $scope.articles[i].delay = diff;
+    }
+
+    $scope.$watch(function () {
+        return {
+            articles: $scope.articles,
+            {% for key, value in tags.items() %}
+            use_{{ key }}: $scope.use_{{ key }},
+            {% endfor %}
+        }
+    }, function (value) {
+        var selected;
+        $scope.count = function (prop, value) {
+            return function (el) {
+                return el[prop] == value;
+            };
+        };
+        var filterAfterAll = $scope.articles;
+        var filterAfterThis = [];
+        {% for key, value in tags.items() %}
+        console.log(filterAfterAll);
+        $scope.{{ key }}Group = uniqueItems($scope.articles, '{{ key }}');
+        selected = false;
+        filterAfterThis = [];
+        for (var j in filterAfterAll) {
+            var p = filterAfterAll[j];
+            for (var i in $scope.use_{{ key }}) {
+                if ($scope.use_{{ key }}[i]) {
+                    selected = true;
+                    console.log(i, p.{{ key }});
+                    console.log(p.{{ key }}.indexOf(i) != -1);
+                    if (p.{{ key }}.indexOf(i) != -1) {
+                        filterAfterThis.push(p);
+                        break;
+                    }
+                }
+            }
+        }
+        console.log("{{ key }}", filterAfterThis, filterAfterAll, selected);
+        if (!selected) {
+            filterAfterThis = filterAfterAll;
+            $scope.filteredArticles = filterAfterThis;
+        }
+        filterAfterAll = filterAfterThis;
+        {% endfor %}
+        $scope.filteredArticles = filterAfterAll;
+        console.log(filterAfterThis, filterAfterAll);
+    }, true);
+
+    $scope.$watch('filtered', function (newValue) {
+        if (angular.isArray(newValue)) {
+            console.log(newValue.length);
+        }
+    }, true);
+}
+
+IgApp.filter('groupBy',
+    function () {
+        return function (collection, key) {
+            if (collection === null) return;
+            return uniqueItems(collection, key);
+        };
+    }
+);
+
+</script>
+{% endblock %}
+
+{% block content %}
+<div ng-controller="IgCtrl">
+    <h1>{{ view.title }}</h1>
+    <br/>
+    <div class="row">
+        <div class="col-md-10">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Task</th>
+                        <th>Start time</th>
+                        <th>Process</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="article in filteredArticles | filter:query">
+                    <td> {$ $index + 1 $} </td>
+                    <td> <a href="{$ article.url $}"> {$ article.title $} </a></td>
+                    <td> {$ article.date $} </td>
+                    <td> 
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped active" style="width: 80%">
+                                <span class="sr-only">80% Complete</span>
+                            </div>
+                        </div>
+                     </td>
+                    <td ng-if="article.delay > 0"> 
+                        <font color="red"> Delayed for {$ article.delay $} day(s)</font>
+                    </td>
+                    <td ng-if="article.delay == 0">
+                        Do it today, buddy.
+                    </td>
+                    <td ng-if="article.delay < 0">
+                        Coming in {$ -article.delay $} day(s)
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    
+        <div class="col-md-2">
+            <h2> Filters </h2>
+            <br/>
+            <div class="form-group">
+                <label class="sr-only" for="igsearch">Search</label>
+                <input type="text" class="form-control" id="igsearch" placeholder="Search" ng-model="query.title">
+            </div>
+            
+            {% for key, value in tags.items() %}
+            <h3>
+            <span class="label label-info">{{ key }}</span>
+            </h3>
+                <p></p>
+                <div class="checkbox" ng-repeat="{{ key }} in {{ key }}Group | orderBy:'toString()'">
+                    <label>
+                        <input type="checkbox" ng-model="use_{{ key }}[{{ key }}]"/>
+                        {$ {{ key }} $}
+                    </label>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+

@@ -37,20 +37,25 @@ class MarkdownRenderer(BaseRenderer):
 class MemoRenderer(BaseRenderer):
     MemoSections = [
             'Metadata',
+            'Tags',
             'Description',
-            'Process'
+            'Process',
     ]
     def render(self, doc, path):
         res = {}
         d = dict(map(lambda x: (x['section'], x['content']), 
                 parser.parse(doc.strip())))
-        if 'Process' not in d:
-            d['Process'] = ''
+        if '[Process]' not in d:
+            d['[Process]'] = ''
+
+        tags = set([])
+
         for section in self.MemoSections:
             s = '[' + section + ']'
             assert s in d, "Section(%s) not in doc(%s)" % (section, path)
             res[section] = d[s]
 
+        res['Tags']        = self.render_tags(res['Tags'])
         res['Process']     = self.render_process(res['Process'])
         res['Description'] = self.render_desc(res['Description'])
         res['Metadata']    = self.render_meta(res['Metadata'])
@@ -67,19 +72,25 @@ class MemoRenderer(BaseRenderer):
         renderer = Renderer('Markdown')
         return renderer.render(''.join(desc))
 
+    def render_tags(self, tags):
+        d = {}
+        for line in tags:
+            line = line.strip()
+            if not line:
+                continue
+            (key, value) = map(lambda x: x.strip(),
+                    line.split(':'))
+            d[key] = map(lambda x: x.strip(), value.split(','))
+        return d
+
     def render_meta(self, meta):
         d = {}
         for line in meta:
             line = line.strip()
             if not line:
                 continue
-
             (key, value) = map(lambda x: x.strip(),
                     line.split(':'))
-
-            if key == 'tags':
-                value = map(lambda x: x.strip(), value.split(','))
-
             d[key] = value
         return d
 

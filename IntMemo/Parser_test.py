@@ -8,7 +8,10 @@ memo1 = '''
 [Metadata]
 date: 2015-03-07
 title: 你很重要，打比赛已经不行了。我得去造个轮子
-tags: python, angularjs, love
+
+[Tags]
+categories: python, angularjs, love
+difficulty: 5
 
 [Description]
 我觉得我已经没有什么潜力可挖了。突然感到有些腻烦。
@@ -31,10 +34,11 @@ class TestParser(unittest.TestCase):
 
     def test_parser(self):
         result = parser.parse(memo1.strip())
-        self.assertEqual(len(result), 3)
+        self.assertEqual(len(result), 4)
         self.assertEqual(result[0]['section'], '[Metadata]')
-        self.assertEqual(result[1]['section'], '[Description]')
-        self.assertEqual(result[2]['section'], '[Process]')
+        self.assertEqual(result[1]['section'], '[Tags]')
+        self.assertEqual(result[2]['section'], '[Description]')
+        self.assertEqual(result[3]['section'], '[Process]')
 
 if __name__ == '__main__':
     unittest.main()

@@ -3,6 +3,9 @@ import sys
 import os
 import json
 import jinja2
+import time
+
+from Filter import to_brief_json
 
 class Generator(object):
     def __new__(cls, name):
@@ -12,36 +15,66 @@ class Generator(object):
             return MemoViewGenerator()
 
 class BaseGenerator(object):
-    def generate(self, view):
-        raise NotImplementedError
+    def generate(self, site, view):
+        self.env = jinja2.Environment(
+                loader = jinja2.FileSystemLoader(site.theme),
+                autoescape=True)
+        self.env.globals['nowts'] = \
+                time.strftime(
+                        '%Y-%m-%d %H:%M:%S %Z',
+                        time.localtime(time.time()))
+        self.env.filters['to_brief_json'] = to_brief_json
 
 class FlatViewGenerator(BaseGenerator):
     def generate(self, site, view):
-        tpl = os.path.join(site.theme, 'flat_view.html')
-        env = jinja2.Environment(
-                loader = jinja2.FileSystemLoader(tpl),
-                autoescape=True)
-        with open(view.content['Path'], 'w') as f:
-            f.write(tpl.render(site, view, doc))
+        super(self.__class__, self).generate(site, view)
+        path = os.path.join(site.output, view.output)
+        tpl = self.env.get_template('flat_view.html')
+        with open(path, 'w') as f:
+            f.write(tpl.render(site=site, view=view).encode('utf-8'))
 
 class MemoViewGenerator(BaseGenerator):
     def generate(self, site, view):
+        super(self.__class__, self).generate(site, view)
         self.generate_article(site, view)
         self.generate_memo(site, view)
 
     def generate_article(self, site, view):
-        tpl = os.path.join(site.theme, 'article_view.html')
-        env = jinja2.Environment(
-                loader = jinja2.FileSystemLoader(tpl),
-                autoescape=True)
-        with open(view.content['Path'], 'w') as f:
-            f.write(tpl.render(site, view, doc))
+        tpl = self.env.get_template('article_view.html')
+        output_path = os.path.join(site.output, view.name)
+        if not os.path.exists(output_path):
+            os.mkdir(output_path)
+
+        for article in view.content:
+            article_id = article['Metadata']['ID']
+            path = os.path.join(output_path,
+                    article_id + '.html')
+            with open(path, 'w') as f:
+                f.write(tpl.render(
+                    site=site,
+                    view=view,
+                    article=article
+                ).encode('utf-8'))
 
     def generate_memo(self, site, view):
-        tpl = os.path.join(site.theme, 'memo_view.html')
-        env = jinja2.Environment(
-                loader = jinja2.FileSystemLoader(tpl),
-                autoescape=True)
-        with open(view.content['Path'], 'w') as f:
-            f.write(tpl.render(site, view, doc))
+        tpl = self.env.get_template('memo_view.html')
+        path = os.path.join(site.output, view.output)
+        tags = dict()
+        for article in view.content:
+            for (key, value) in article['Tags'].items():
+                if key not in tags:
+                    tags[key] = []
+                tags[key] += value
+
+        for (key, value) in tags.items():
+            tags[key] = list(set(value))
+
+        print tags
+
+        with open(path, 'w') as f:
+            f.write(tpl.render(
+                site=site,
+                view=view,
+                tags=tags,
+            ).encode('utf-8'))
 

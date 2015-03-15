@@ -10,44 +10,55 @@
         <link rel="stylesheet" type="text/css" href="http://intgraph.qiniudn.com/static/pygments.css"/>
         <style>body { padding-top: 70px; }</style>
         
-        <title>{% block title %}{% endblock %}</title>
-        {% block head %}
-        {% endblock %}
+        <title></title>
+        
+        
     </head>
     <body ng-app="IgApp">
         <div class="navbar navbar-default navbar-fixed-top" role="navigation">
             <div class="container">
                 <div class="navbar-header">
                     <a class="navbar-brand" href="/index.html">
-                        {{ site.name }}
+                        IntMemo
                     </a>
                 </div>
                 <ul class="nav navbar-nav">
-                    {% for view in site.memo_views + site.flat_views %}
+                    
                     <li>
-                        <a href="/{{ view.output }}">
-                            {{ view.title }}
+                        <a href="/index.html">
+                            Memo List
                         </a>
                     </li>
-                    {% endfor %}
+                    
+                    <li>
+                        <a href="/about.html">
+                            About
+                        </a>
+                    </li>
+                    
                 </ul>
             </div>
         </div>
         <div class="container">
-            {% block content %}
-            {% endblock %}
+            
+
+<h1>About</h1>
+
+<p><a href="http://zh.wikipedia.org/zh/%E8%B5%AB%E5%B0%94%E6%9B%BC%C2%B7%E8%89%BE%E5%AE%BE%E6%B5%A9%E6%96%AF">艾宾浩斯记忆曲线</a></p>
+
+
+
         </div>
         <hr/>
         <footer class="bs-footer" role="contentinfo">
             <div class="container">
                 <p>Powered by IntMemo</p>
-                <p>This page is generated at {{ nowts }}.</p>
+                <p>This page is generated at 2015-03-16 00:28:07 CST.</p>
                 <p>Designed and built by <a href="http://wizmann.tk">Wizmann</a>. </p>
             </div>
         </footer>
 
-        {% block extend_css %} {% endblock %}
-        {% block extend_js  %} {% endblock %}
+         
+         
     </body>
 </html>
-

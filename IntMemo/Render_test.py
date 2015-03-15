@@ -7,7 +7,10 @@ memo1 = '''
 [Metadata]
 date: 2015-03-07
 title: 你很重要，打比赛已经不行了。我得去造个轮子
-tags: python, angularjs, love
+
+[Tags]
+categories: python, angularjs, love
+difficulty: 5
 
 [Description]
 我觉得我已经没有什么潜力可挖了。突然感到有些腻烦。
@@ -34,6 +37,7 @@ class TestRender(unittest.TestCase):
         res = renderer.render(memo1, '/path/to/fake.md')
         self.assertEqual(res['Metadata']['ID'], 'fake')
         self.assertEqual(res['Metadata']['date'], '2015-03-07')
+        self.assertEqual(res['Tags']['difficulty'], ['5'])
 
 if __name__ == '__main__':
     unittest.main()

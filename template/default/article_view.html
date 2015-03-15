@@ -2,37 +2,21 @@
 
 {% block content %}
 
-<h1> view.title </h1>
+<h1> {{ article.Metadata.title }} </h1>
 
 <div class="panel">
     <div class="panel-body">
         <footer class="post-info">
             <span class="label label-default">Date</span>
             <span class="published">
-                <i class="icon-calendar"></i>{{ stats.Metadata.date }}
+                <i class="icon-calendar"></i>{{ article.Metadata.date }}
             </span>
             <p></p>
-            {% for key, vlist in stats.Tags.items() %}
-                <span class="label label-primary ">{{ key }}</span>
-                {% for value in vlist %}
-                <span> {{ value }}  {% if not loop.last %}/{% endif %} </span>
-                {% endfor %}
-                <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            {% for tag in article.Metadata.tags %}
+                {{ tag }}
             {% endfor %}
         </footer>
     </div>
 </div>
 
-
-{% for session, content in stats.Content.items() %}
-
-<h2>{{ session }}</h2>
-
-<div>
-{% endif %}
-
-{{ content|safe }}
-
-</div>
-
-{% endfor %}
+{% endblock %}

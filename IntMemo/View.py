@@ -8,30 +8,20 @@ from Render import Renderer
 flat_views = []
 memo_views = []
 
-class MetaView(object):
-    views = []
+class MetaFlatView(type):
     def __init__(cls, name, bases, attrs):
-        parents = [b for b in bases if isinstance(b, MetaPattern))]
+        parents = [b for b in bases if isinstance(b, MetaFlatView)]
         if parents:
-            views.append(cls())
+            flat_views.append(cls())
 
-class MetaFlatView(MetaView):
-    views = flag_views
+class MetaMemoView(type):
+    def __init__(cls, name, bases, attrs):
+        parents = [b for b in bases if isinstance(b, MetaMemoView)]
+        if parents:
+            memo_views.append(cls())
 
-class MetaMemoView(MetaView):
-    views = memo_views
-
-class BaseView(object):
-    def process(self):
-        raise NotImplementedError
-
-class BaseFlatView(BaseView):
+class FlatView(object):
     __metaclass__ = MetaFlatView
-
-class BaseMemoView(BaseView):
-    __metaclass__ = MetaMemoView
-
-class FlatView(BaseFlatView):
     def __init__(self):
         self.content = ''
 
@@ -41,7 +31,8 @@ class FlatView(BaseFlatView):
             renderer = Renderer('Markdown')
             self.content = renderer.render(doc)
 
-class MemoView(self):
+class MemoView(object):
+    __metaclass__ = MetaMemoView
     def __init__(self):
         self.content = []
 
@@ -53,10 +44,11 @@ class MemoView(self):
             return
         renderer = Renderer('Memo')
         for memo in os.listdir(self.path):
-            with open(memo) as f:
+            path = os.path.join(self.path, memo)
+            with open(path) as f:
                 doc = f.read()
             self.content.append(
-                    renderer.render(doc))
+                    renderer.render(doc, path))
 
 
 
