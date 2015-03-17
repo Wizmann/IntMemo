@@ -5,7 +5,7 @@ import json
 import jinja2
 import time
 
-from Filter import to_brief_json
+import Filter
 
 class Generator(object):
     def __new__(cls, name):
@@ -23,7 +23,8 @@ class BaseGenerator(object):
                 time.strftime(
                         '%Y-%m-%d %H:%M:%S %Z',
                         time.localtime(time.time()))
-        self.env.filters['to_brief_json'] = to_brief_json
+        json_handler = Filter.ArticleJsonHandler(site, view)
+        self.env.filters['to_article_json'] = json_handler
 
 class FlatViewGenerator(BaseGenerator):
     def generate(self, site, view):
@@ -36,6 +37,7 @@ class FlatViewGenerator(BaseGenerator):
 class MemoViewGenerator(BaseGenerator):
     def generate(self, site, view):
         super(self.__class__, self).generate(site, view)
+
         self.generate_article(site, view)
         self.generate_memo(site, view)
 

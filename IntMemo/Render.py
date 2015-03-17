@@ -1,5 +1,6 @@
 #coding=utf-8
 import os
+import json
 import cgi
 import misaka
 import pygments.lexers
@@ -66,7 +67,7 @@ class MemoRenderer(BaseRenderer):
         return res
 
     def render_process(self, process):
-        return (''.join(process)).strip()
+        return json.loads((''.join(process)).strip())
 
     def render_desc(self, desc):
         renderer = Renderer('Markdown')

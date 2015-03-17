@@ -4,6 +4,7 @@
 <script src="http://intgraph.qiniudn.com/static/buckets-minified.js"></script>
 <script src="http://intgraph.qiniudn.com/static/angular.min.js"></script>
 <script src="http://7xi3l2.com1.z0.glb.clouddn.com/moment.js"></script>
+<style>.progress { margin-bottom: 0px; }</style>
 <script>
 var IgApp = angular.module('IgApp', [], function($interpolateProvider) {
     $interpolateProvider.startSymbol('{$');
@@ -28,18 +29,22 @@ function IgCtrl($scope, filterFilter) {
 
     $scope.articles = [
         {% for article in view.content %}
-        {{ article|to_brief_json|safe }},
+        {{ article|to_article_json|safe }},
         {% endfor %}
     ];
     
     for (var i = 0; i < $scope.articles.length; i++) {
-        var t;
-        if (typeof $scope.articles[i].process.nexttime === undefined) {
-            t = $scope.articles[i].process.nexttime;
+        var t, diff = 0;
+        console.log(typeof $scope.articles[i]["nexttime"]);
+        if (typeof $scope.articles[i]["nexttime"] === undefined) {
+            t = $scope.articles[i]["nexttime"];
         } else {
+            if ($scope.articles[i]["nexttime"].length == 0) {
+                $scope.articles[i].done = true;
+            }
             t = $scope.articles[i].date;
         }
-        var diff = moment().startOf('day').diff(moment(t), 'days');
+        diff = moment().startOf('day').diff(moment(t), 'days');
         $scope.articles[i].delay = diff;
     }
 
@@ -117,11 +122,11 @@ IgApp.filter('groupBy',
             <table class="table">
                 <thead>
                     <tr>
-                        <th>#</th>
-                        <th>Task</th>
-                        <th>Start time</th>
-                        <th>Process</th>
-                        <th>Status</th>
+                        <th class="col-md-1">#</th>
+                        <th class="col-md-5">Task</th>
+                        <th class="col-md-2">Start time</th>
+                        <th class="col-md-2">Process</th>
+                        <th class="col-md-2">Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -131,19 +136,21 @@ IgApp.filter('groupBy',
                     <td> {$ article.date $} </td>
                     <td> 
                         <div class="progress">
-                            <div class="progress-bar progress-bar-striped active" style="width: 80%">
-                                <span class="sr-only">80% Complete</span>
+                            <div class="progress-bar progress-bar-striped active" style="width: {$ article.process $}">
                             </div>
                         </div>
                      </td>
-                    <td ng-if="article.delay > 0"> 
+                    <td ng-if="!article.done && article.delay > 0"> 
                         <font color="red"> Delayed for {$ article.delay $} day(s)</font>
                     </td>
-                    <td ng-if="article.delay == 0">
+                    <td ng-if="!article.done && article.delay == 0">
                         Do it today, buddy.
                     </td>
-                    <td ng-if="article.delay < 0">
+                    <td ng-if="!article.done && article.delay < 0">
                         Coming in {$ -article.delay $} day(s)
+                    </td>
+                    <td ng-if="article.done">
+                        Done!
                     </td>
                 </tr>
                 </tbody>
