@@ -26,6 +26,12 @@ function IgCtrl($scope, filterFilter) {
     {% for key, value in tags.items() %}
     $scope.use_{{ key }} = {};
     {% endfor %}
+    $scope.due_date_today   = true;
+    $scope.due_date_in3days = false;
+    $scope.due_date_in7days = false;
+    $scope.due_date_further = false;
+    $scope.due_date_done    = false;
+    $scope.due_date_all     = false;
 
     $scope.articles = [
         {% for article in view.content %}
@@ -37,15 +43,20 @@ function IgCtrl($scope, filterFilter) {
         var t, diff = 0;
         console.log(typeof $scope.articles[i]["nexttime"]);
         if (typeof $scope.articles[i]["nexttime"] === undefined) {
-            t = $scope.articles[i]["nexttime"];
+            t = $scope.articles[i].date;
         } else {
             if ($scope.articles[i]["nexttime"].length == 0) {
                 $scope.articles[i].done = true;
             }
-            t = $scope.articles[i].date;
+            t = $scope.articles[i]["nexttime"];
         }
+        
         diff = moment().startOf('day').diff(moment(t), 'days');
         $scope.articles[i].delay = diff;
+        
+        if ($scope.articles[i].done) {
+            $scope.articles[i].delay = -0xdeadbeaf;
+        }
     }
 
     $scope.$watch(function () {
@@ -54,6 +65,12 @@ function IgCtrl($scope, filterFilter) {
             {% for key, value in tags.items() %}
             use_{{ key }}: $scope.use_{{ key }},
             {% endfor %}
+            due_date_today   : $scope.due_date_today   ,
+            due_date_in3days : $scope.due_date_in3days ,
+            due_date_in7days : $scope.due_date_in7days ,
+            due_date_further : $scope.due_date_further ,
+            due_date_done    : $scope.due_date_done    ,
+            due_date_all     : $scope.due_date_all    ,
         }
     }, function (value) {
         var selected;
@@ -74,8 +91,6 @@ function IgCtrl($scope, filterFilter) {
             for (var i in $scope.use_{{ key }}) {
                 if ($scope.use_{{ key }}[i]) {
                     selected = true;
-                    console.log(i, p.{{ key }});
-                    console.log(p.{{ key }}.indexOf(i) != -1);
                     if (p.{{ key }}.indexOf(i) != -1) {
                         filterAfterThis.push(p);
                         break;
@@ -90,8 +105,27 @@ function IgCtrl($scope, filterFilter) {
         }
         filterAfterAll = filterAfterThis;
         {% endfor %}
+        filterAfterThis = [];
+        for (var j in filterAfterAll) {
+            var p = filterAfterAll[j];
+            if ($scope.due_date_today && p.delay >= 0) {
+                filterAfterThis.push(p);
+            } else if ($scope.due_date_in3days && p.delay >= -3 && p.delay < 0) {
+                filterAfterThis.push(p);
+            } else if ($scope.due_date_in7days && p.delay >= -7 && p.delay < -3) {
+                filterAfterThis.push(p);
+            } else if ($scope.due_date_further && !p.done && p.delay < -7) {
+                filterAfterThis.push(p);
+            } else if ($scope.due_date_done && p.done) {
+                filterAfterThis.push(p); 
+            } else if ($scope.due_date_all) {
+                filterAfterThis.push(p); 
+            }
+        }
+        filterAfterAll = filterAfterThis;
+        
         $scope.filteredArticles = filterAfterAll;
-        console.log(filterAfterThis, filterAfterAll);
+        
     }, true);
 
     $scope.$watch('filtered', function (newValue) {
@@ -130,16 +164,18 @@ IgApp.filter('groupBy',
                     </tr>
                 </thead>
                 <tbody>
-                <tr ng-repeat="article in filteredArticles | filter:query">
+                <tr ng-repeat="article in filteredArticles | filter:query | orderBy:'-delay'">
                     <td> {$ $index + 1 $} </td>
                     <td> <a href="{$ article.url $}"> {$ article.title $} </a></td>
                     <td> {$ article.date $} </td>
                     <td> 
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-striped active" style="width: {$ article.process $}">
-                            </div>
+                        <div ng-if="article.done" class="progress">
+                            <div class="progress-bar progress-bar-success progress-bar-striped active" style="width: {$ article.process $}"></div>
                         </div>
-                     </td>
+                        <div ng-if="!article.done" class="progress">
+                            <div class="progress-bar progress-bar-striped active" style="width: {$ article.process $}"></div>
+                        </div>
+                    </td>
                     <td ng-if="!article.done && article.delay > 0"> 
                         <font color="red"> Delayed for {$ article.delay $} day(s)</font>
                     </td>
@@ -150,7 +186,7 @@ IgApp.filter('groupBy',
                         Coming in {$ -article.delay $} day(s)
                     </td>
                     <td ng-if="article.done">
-                        Done!
+                        <span class="label label-success">Done</span>
                     </td>
                 </tr>
                 </tbody>
@@ -164,7 +200,40 @@ IgApp.filter('groupBy',
                 <label class="sr-only" for="igsearch">Search</label>
                 <input type="text" class="form-control" id="igsearch" placeholder="Search" ng-model="query.title">
             </div>
-            
+            <h3>
+                <span class="label label-info">Due Date</span>
+            </h3>
+            <p></p>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="due_date_today" checked="checked" /> Today
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="due_date_in3days" /> In 3 days
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="due_date_in7days"/> In a week
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="due_date_further"/> Further
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="due_date_done"/> Done
+                </label>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" ng-model="due_date_all"/> All
+                </label>
+            </div>
             {% for key, value in tags.items() %}
             <h3>
             <span class="label label-info">{{ key }}</span>

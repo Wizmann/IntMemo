@@ -12,11 +12,31 @@
                 <i class="icon-calendar"></i>{{ article.Metadata.date }}
             </span>
             <p></p>
-            {% for tag in article.Metadata.tags %}
-                {{ tag }}
+            {% for (key, value) in article.Tags.items() %}
+                 <span class="label label-primary ">{{ key }}</span>
+                 <span> {{ value|join }} </span>
+                 <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
             {% endfor %}
+                 <span class="label label-danger">Task ID</span>
+                 <span> {{ article.Metadata.ID }} </span>
         </footer>
     </div>
+</div>
+
+<div>
+{{ article.Description|safe }}
+</div>
+
+<hr/>
+
+<h3> Task Records </h3>
+<div>
+{% for record in article.Process.records %}
+    <div class="alert alert-info" role="alert">
+      <b>{{ record.date }}</b>
+      <p>{{ record.comment }}</p>
+    </div>
+{% endfor %}
 </div>
 
 {% endblock %}

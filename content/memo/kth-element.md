@@ -10,5 +10,5 @@ difficulty: 3
 快速排序与快速划分
 
 [Process]
-{"nexttime": "2015-04-19", "records": [{"date": "2013-01-04", "comment": "the very first day"}, {"date": "2015-03-07", "comment": "the last day"}], "idx": 1}
+{"nexttime": "2015-03-07", "records": [{"date": "2013-01-04", "comment": "the very first day"}, {"date": "2015-03-07", "comment": "the last day"}], "idx": 1}
 

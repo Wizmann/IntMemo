@@ -23,3 +23,5 @@ class ArticleJsonHandler(object):
         ])
         return json.dumps(d)
 
+def join(valuelist):
+    return ' / '.join(map(str, valuelist))

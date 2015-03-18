@@ -25,6 +25,7 @@ class BaseGenerator(object):
                         time.localtime(time.time()))
         json_handler = Filter.ArticleJsonHandler(site, view)
         self.env.filters['to_article_json'] = json_handler
+        self.env.filters['join'] = Filter.join
 
 class FlatViewGenerator(BaseGenerator):
     def generate(self, site, view):
@@ -51,6 +52,7 @@ class MemoViewGenerator(BaseGenerator):
             article_id = article['Metadata']['ID']
             path = os.path.join(output_path,
                     article_id + '.html')
+            print article
             with open(path, 'w') as f:
                 f.write(tpl.render(
                     site=site,
