@@ -17,7 +17,7 @@ class Generator(object):
 class BaseGenerator(object):
     def generate(self, site, view):
         self.env = jinja2.Environment(
-                loader = jinja2.FileSystemLoader(site.theme),
+                loader=jinja2.FileSystemLoader(site.theme),
                 autoescape=True)
         self.env.globals['nowts'] = \
                 time.strftime(
@@ -52,7 +52,6 @@ class MemoViewGenerator(BaseGenerator):
             article_id = article['Metadata']['ID']
             path = os.path.join(output_path,
                     article_id + '.html')
-            print article
             with open(path, 'w') as f:
                 f.write(tpl.render(
                     site=site,
@@ -72,8 +71,6 @@ class MemoViewGenerator(BaseGenerator):
 
         for (key, value) in tags.items():
             tags[key] = list(set(value))
-
-        print tags
 
         with open(path, 'w') as f:
             f.write(tpl.render(
