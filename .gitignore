@@ -60,3 +60,6 @@ IntMemo/parser.out
 # vim
 *.swp
 *.swo
+
+# publish
+publish/
