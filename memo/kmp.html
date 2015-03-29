@@ -42,47 +42,35 @@
         <div class="container">
             
 
-<h1> Sort Color </h1>
+<h1> KMP algorithm </h1>
 
 <div class="panel">
     <div class="panel-body">
         <footer class="post-info">
             <span class="label label-default">Date</span>
             <span class="published">
-                <i class="icon-calendar"></i>2015-03-24
+                <i class="icon-calendar"></i>2015-03-29
             </span>
             <p></p>
             
                  <span class="label label-primary ">difficulty</span>
-                 <span> 2 </span>
+                 <span> 3 </span>
                  <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
             
                  <span class="label label-primary ">categories</span>
-                 <span> sort / leetcode </span>
+                 <span> algorithm / kmp / string </span>
                  <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
             
                  <span class="label label-danger">Task ID</span>
-                 <span> sort-color </span>
+                 <span> kmp </span>
         </footer>
     </div>
 </div>
 
 <div>
-<p>https://leetcode.com/problems/sort-colors/</p>
-<div class="highlight"><pre><span class="k">class</span> <span class="nc">Solution</span> <span class="p">{</span>
-<span class="nl">public:</span>
-    <span class="kt">void</span> <span class="n">sortColors</span><span class="p">(</span><span class="kt">int</span> <span class="n">A</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="p">;</span> <span class="cm">/*pass*/</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">switch</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="p">{</span>
-                <span class="k">case</span> <span class="mi">0</span>: <span class="n">swap</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">l</span><span class="o">++</span><span class="p">]);</span> <span class="k">break</span><span class="p">;</span>
-                <span class="k">case</span> <span class="mi">2</span>: <span class="n">swap</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">r</span><span class="o">--</span><span class="p">]);</span> <span class="k">break</span><span class="p">;</span>
-                <span class="nl">default:</span> <span class="n">i</span><span class="o">++</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
-            <span class="p">}</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">};</span>
-</pre></div>
+<p>Kmp算法</p>
+
+<p>POJ 2752 &amp; POJ 2406 &amp; KMP String Match</p>
 
 </div>
 
@@ -92,8 +80,8 @@
 <div>
 
     <div class="alert alert-info" role="alert">
-      <b>2015-03-24</b>
-      <p>initial review</p>
+      <b>2015-03-29</b>
+      <p>initial review @ virtual judge</p>
     </div>
 
 </div>
