@@ -44,6 +44,8 @@ class MemoView(object):
             return
         renderer = Renderer('Memo')
         for memo in os.listdir(self.path):
+            if not memo.endswith('.md'):
+                continue
             path = os.path.join(self.path, memo)
             with open(path) as f:
                 doc = f.read()

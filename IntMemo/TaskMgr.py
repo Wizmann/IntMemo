@@ -1,5 +1,6 @@
 #coding=utf-8
 import os
+import logging
 import json
 import tempfile
 import subprocess
@@ -13,10 +14,8 @@ class TaskMgr(object):
         self.view = view
         self.taskid = taskid
 
-    def add_record(self):
-        record = self.get_record()
+    def add_record(self, record):
         article = self.parse_article()
-
         self.do_add_record(article, record, self.view.review_period)
         self.dump_to_file(article)
 
@@ -25,14 +24,23 @@ class TaskMgr(object):
         for section in article:
             if section['section'] == '[Process]':
                 process_section = section
-
-        d = process_section.get('content', {})
+            if section['section'] == '[Description]':
+                desc = ''
+                for item in section['content']:
+                    if item.strip():
+                        desc += item + '\n'
+                    else:
+                        desc += '\n'
+                section['content'] = desc.strip()
+        d = ''.join(process_section.get('content', '')).strip()
         if d:
             d = json.loads(''.join(d))
+        else:
+            d = {}
         idx = d.get('idx', 0)
 
         d['idx'] = idx + 1
-        if d['idx'] == len(review_period):
+        if d['idx'] >= len(review_period):
             d['nexttime'] = ''
         else:
             delta = review_period[idx + 1] - \
@@ -48,11 +56,11 @@ class TaskMgr(object):
         })
         d['records'] = records
 
-        if process_section:
-            process_section['content'] = json.dumps(d)
-        else:
+        if not process_section:
             process_section['section'] = '[Process]'
             article.append(process_section)
+        process_section['content'] = json.dumps(d)
+        print process_section
 
     def get_record(self):
         EDITOR = os.environ.get('EDITOR','vim') 
@@ -69,27 +77,28 @@ class TaskMgr(object):
     def parse_article(self):
         path = os.path.join(self.view.path, self.taskid + '.md')
         with open(path) as article_file:
-            article = parser.parse(article_file.read().strip())
+            article_str = article_file.read()
+            article = parser.parse(article_str)
         return article
 
     def dump_to_file(self, article):
         path = os.path.join(self.view.path, self.taskid + '.md')
+        r = self.dict_to_memo(article).encode('utf-8')
         with open(path, 'w') as article_file:
-            article_file.write(
-                    self.dict_to_memo(article).encode('utf-8'))
+            article_file.write(r)
 
     def dict_to_memo(self, article):
-        tplstr = '''\
-{% for section in article %}
-{{ section.section }}
-{{ section.content|strjoin }}
-{% endfor %}
-'''
-        env = jinja2.Environment()
-        env.filters['to_json'] = lambda x: json.dumps(x)
-        env.filters['strjoin'] = lambda x: ''.join(
-                map(lambda y: y.decode('utf-8'), x)).strip()
-        tpl = env.from_string(tplstr)
-        res = tpl.render(article=article)
+        res = ''
+        for section in article:
+            res += section['section']
+            res += '\n'
+            if isinstance(section['content'], unicode) or \
+                    isinstance(section['content'], str):
+                res += section['content'].decode('utf-8')
+            else:
+                res += '\n'.join(
+                    map(lambda x: x.decode('utf-8'), 
+                        filter(lambda y: y, section['content']))).strip()
+            res += '\n'
         return res
 

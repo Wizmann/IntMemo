@@ -110,11 +110,11 @@ function IgCtrl($scope, filterFilter) {
             var p = filterAfterAll[j];
             if ($scope.due_date_today && p.delay >= 0) {
                 filterAfterThis.push(p);
-            } else if ($scope.due_date_in3days && p.delay >= -3 && p.delay < 0) {
+            } else if ($scope.due_date_in3days && p.delay >= -3) {
                 filterAfterThis.push(p);
-            } else if ($scope.due_date_in7days && p.delay >= -7 && p.delay < -3) {
+            } else if ($scope.due_date_in7days && p.delay >= -7) {
                 filterAfterThis.push(p);
-            } else if ($scope.due_date_further && !p.done && p.delay < -7) {
+            } else if ($scope.due_date_further && !p.done) {
                 filterAfterThis.push(p);
             } else if ($scope.due_date_done && p.done) {
                 filterAfterThis.push(p); 

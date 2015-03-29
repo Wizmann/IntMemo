@@ -45,7 +45,7 @@ class MemoRenderer(BaseRenderer):
     def render(self, doc, path):
         res = {}
         d = dict(map(lambda x: (x['section'], x['content']), 
-                parser.parse(doc.strip())))
+                parser.parse(doc)))
         if '[Process]' not in d:
             d['[Process]'] = ''
 
@@ -71,7 +71,13 @@ class MemoRenderer(BaseRenderer):
 
     def render_desc(self, desc):
         renderer = Renderer('Markdown')
-        return renderer.render(''.join(desc))
+        desc_str = ''
+        for item in desc:
+            if item.strip():
+                desc_str += item + '\n'
+            else:
+                desc_str += '\n'
+        return renderer.render(desc_str.strip())
 
     def render_tags(self, tags):
         d = {}
@@ -79,6 +85,7 @@ class MemoRenderer(BaseRenderer):
             line = line.strip()
             if not line:
                 continue
+            print line
             (key, value) = map(lambda x: x.strip(),
                     line.split(':'))
             d[key] = map(lambda x: x.strip(), value.split(','))

@@ -21,17 +21,11 @@ def p_memo(p):
             p[0].append(p[2])
 
 def p_section(p):
-    ''' section : SECTION content'''
+    ''' section : SECTION content '''
     p[0] = {
         'section': p[1],
         'content': p[2],
     }
-
-def p_line(p):
-    ''' line : CR
-             | LINE
-    '''
-    p[0] = p[1]
 
 def p_content(p):
     ''' content : content line
@@ -49,8 +43,22 @@ def p_content(p):
         if p[2]:
             p[0].append(p[2])
 
+def p_empty(p):
+    'empty :'
+    pass
+
+def p_line(p):
+    ''' line : LINE CR
+             | CR
+             | empty
+    '''
+    p[0] = p[1]
+
 
 def p_error(p):
-    logging.fatal("Syntax Error in input: %s" % p)
+    if p:
+        logging.fatal("Syntax Error in input: %s" % p.value)
+    else:
+        logging.fatal("Syntax Error in input at EOI")
 
 parser = yacc.yacc()
