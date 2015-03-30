@@ -72,12 +72,14 @@
 <div class="highlight"><pre><span class="k">class</span> <span class="nc">Solution</span> <span class="p">{</span>
 <span class="nl">public:</span>
     <span class="kt">void</span> <span class="n">sortColors</span><span class="p">(</span><span class="kt">int</span> <span class="n">A</span><span class="p">[],</span> <span class="kt">int</span> <span class="n">n</span><span class="p">)</span> <span class="p">{</span>
-        <span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
-        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="p">;</span> <span class="cm">/*pass*/</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">switch</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="p">{</span>
-                <span class="k">case</span> <span class="mi">0</span>: <span class="n">swap</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="o">++</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">l</span><span class="o">++</span><span class="p">]);</span> <span class="k">break</span><span class="p">;</span>
-                <span class="k">case</span> <span class="mi">2</span>: <span class="n">swap</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">r</span><span class="o">--</span><span class="p">]);</span> <span class="k">break</span><span class="p">;</span>
-                <span class="nl">default:</span> <span class="n">i</span><span class="o">++</span><span class="p">;</span> <span class="k">break</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">l</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="kt">int</span> <span class="n">r</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+
+        <span class="k">for</span> <span class="p">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">r</span><span class="p">;</span> <span class="n">i</span> <span class="o">=</span> <span class="n">max</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">l</span><span class="p">))</span> <span class="p">{</span>
+            <span class="k">switch</span> <span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="p">{</span>
+                <span class="k">case</span> <span class="mi">0</span>:  <span class="p">{</span> <span class="n">swap</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">l</span><span class="o">++</span><span class="p">]);</span> <span class="p">}</span> <span class="k">break</span><span class="p">;</span>
+                <span class="k">case</span> <span class="mi">2</span>:  <span class="p">{</span> <span class="n">swap</span><span class="p">(</span><span class="n">A</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">A</span><span class="p">[</span><span class="n">r</span><span class="o">--</span><span class="p">]);</span> <span class="p">}</span> <span class="k">break</span><span class="p">;</span>
+                <span class="nl">default:</span> <span class="p">{</span> <span class="n">i</span><span class="o">++</span><span class="p">;</span> <span class="p">}</span>                <span class="k">break</span><span class="p">;</span>
             <span class="p">}</span>
         <span class="p">}</span>
     <span class="p">}</span>
@@ -96,6 +98,11 @@
       <p>initial review</p>
     </div>
 
+    <div class="alert alert-info" role="alert">
+      <b>2015-03-30</b>
+      <p>second review @ leetcode</p>
+    </div>
+
 </div>
 
 
@@ -104,7 +111,7 @@
         <footer class="bs-footer" role="contentinfo">
             <div class="container">
                 <p>Powered by IntMemo</p>
-                <p>This page is generated at 2015-03-29 14:10:14 CST.</p>
+                <p>This page is generated at 2015-03-30 09:54:23 CST.</p>
                 <p>Designed and built by <a href="http://wizmann.tk">Wizmann</a>. </p>
             </div>
         </footer>
