@@ -42,37 +42,39 @@
         <div class="container">
             
 
-<h1> Clique Problem </h1>
+<h1> Next Permutation </h1>
 
 <div class="panel">
     <div class="panel-body">
         <footer class="post-info">
             <span class="label label-default">Date</span>
             <span class="published">
-                <i class="icon-calendar"></i>2015-03-29
+                <i class="icon-calendar"></i>2015-04-09
             </span>
             <p></p>
             
                  <span class="label label-primary ">difficulty</span>
-                 <span> 3 </span>
+                 <span> 2 </span>
                  <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
             
                  <span class="label label-primary ">categories</span>
-                 <span> algorithm / dp / greedy </span>
+                 <span> implementation </span>
                  <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
             
                  <span class="label label-danger">Task ID</span>
-                 <span> clique-problem </span>
+                 <span> next-permutation </span>
         </footer>
     </div>
 </div>
 
 <div>
-<p>Clique Problem </p>
+<p>Next Permutation算法</p>
 
-<p>CodeForces 527D</p>
-
-<p>求最长不相交区间</p>
+<ol>
+<li>为了保证与原串具有相近的字典序，所以要从串尾开始寻找第一个可交换的顺序对</li>
+<li>找到顺序对后，为了保证字典序是比原串大的最小的一个，所以我们找到比当前顺序对&lt;a, b&gt;中<code>a</code>大的最小的值进行交换</li>
+<li>将串尾的逆序序列反转，<strong>保证字典序是比原串大的最小的一个</strong></li>
+</ol>
 
 </div>
 
@@ -82,8 +84,8 @@
 <div>
 
     <div class="alert alert-info" role="alert">
-      <b>2015-03-29</b>
-      <p>initial review @ codeforces</p>
+      <b>2015-04-10</b>
+      <p>first review</p>
     </div>
 
 </div>
